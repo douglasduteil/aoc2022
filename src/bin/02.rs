@@ -37,42 +37,14 @@ enum Hand {
     Scissors,
 }
 
-//
-//
-//
-
-enum OpponentHand {
-    Hand(Hand),
-}
-
-impl FromStr for OpponentHand {
-    type Err = ();
+impl FromStr for Hand {
+    type Err = String;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "A" => Ok(OpponentHand::Hand(Hand::Rock)),
-            "B" => Ok(OpponentHand::Hand(Hand::Paper)),
-            "C" => Ok(OpponentHand::Hand(Hand::Scissors)),
-            _ => Err(()),
-        }
-    }
-}
-
-//
-//
-//
-
-enum YourHand {
-    Hand(Hand),
-}
-
-impl FromStr for YourHand {
-    type Err = ();
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "X" => Ok(YourHand::Hand(Hand::Rock)),
-            "Y" => Ok(YourHand::Hand(Hand::Paper)),
-            "Z" => Ok(YourHand::Hand(Hand::Scissors)),
-            _ => Err(()),
+            "A" | "X" => Ok(Hand::Rock),
+            "B" | "Y" => Ok(Hand::Paper),
+            "C" | "Z" => Ok(Hand::Scissors),
+            _ => Err(format!("'{}' is unknown", s)),
         }
     }
 }
@@ -107,8 +79,8 @@ pub fn total_score_if_one_trust_the_strategy_guide(input: &str) -> Option<u32> {
 
 fn guested_strategy(round: &str) -> Option<u32> {
     let (opponent_letter, your_letter) = round.split_once(' ')?;
-    let YourHand::Hand(your_hand) = your_letter.parse().unwrap();
-    let OpponentHand::Hand(opponent_hand) = opponent_letter.parse().unwrap();
+    let your_hand = your_letter.parse().unwrap();
+    let opponent_hand = opponent_letter.parse().unwrap();
     let hand_score = score_from_hand(&your_hand);
     let round_score = score_from_matchups(&opponent_hand, &your_hand);
     Some((hand_score as u32) + (round_score as u32))
@@ -123,8 +95,8 @@ pub fn total_score_if_one_understand_the_strategy_guide(input: &str) -> Option<u
 fn real_strategy(round: &str) -> Option<u32> {
     let (opponent_letter, strategy_letter) = round.split_once(' ')?;
     let Strategy::RoundResult(round_result) = strategy_letter.parse().unwrap();
-    let OpponentHand::Hand(opponent_hand) = opponent_letter.parse().unwrap();
-    let YourHand::Hand(your_hand) = strategic_hand(&opponent_hand, &round_result);
+    let opponent_hand = opponent_letter.parse().unwrap();
+    let your_hand = strategic_hand(&opponent_hand, &round_result);
     let hand_score = score_from_hand(&your_hand);
     let round_score = score_from_matchups(&opponent_hand, &your_hand);
     Some((hand_score as u32) + (round_score as u32))
@@ -154,19 +126,19 @@ fn score_from_matchups(opponent_hand: &Hand, your_hand: &Hand) -> RoundResult {
     }
 }
 
-fn strategic_hand(opponent_hand: &Hand, round: &RoundResult) -> YourHand {
+fn strategic_hand(opponent_hand: &Hand, round: &RoundResult) -> Hand {
     match (opponent_hand, round) {
-        (Hand::Paper, RoundResult::Draw) => YourHand::Hand(Hand::Paper),
-        (Hand::Paper, RoundResult::Lost) => YourHand::Hand(Hand::Rock),
-        (Hand::Paper, RoundResult::Won) => YourHand::Hand(Hand::Scissors),
+        (Hand::Paper, RoundResult::Draw) => Hand::Paper,
+        (Hand::Paper, RoundResult::Lost) => Hand::Rock,
+        (Hand::Paper, RoundResult::Won) => Hand::Scissors,
         //
-        (Hand::Rock, RoundResult::Draw) => YourHand::Hand(Hand::Rock),
-        (Hand::Rock, RoundResult::Lost) => YourHand::Hand(Hand::Scissors),
-        (Hand::Rock, RoundResult::Won) => YourHand::Hand(Hand::Paper),
+        (Hand::Rock, RoundResult::Draw) => Hand::Rock,
+        (Hand::Rock, RoundResult::Lost) => Hand::Scissors,
+        (Hand::Rock, RoundResult::Won) => Hand::Paper,
         //
-        (Hand::Scissors, RoundResult::Draw) => YourHand::Hand(Hand::Scissors),
-        (Hand::Scissors, RoundResult::Lost) => YourHand::Hand(Hand::Paper),
-        (Hand::Scissors, RoundResult::Won) => YourHand::Hand(Hand::Rock),
+        (Hand::Scissors, RoundResult::Draw) => Hand::Scissors,
+        (Hand::Scissors, RoundResult::Lost) => Hand::Paper,
+        (Hand::Scissors, RoundResult::Won) => Hand::Rock,
     }
 }
 //
