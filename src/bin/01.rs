@@ -50,8 +50,8 @@ pub fn find_the_top_three_elves_carrying_the_most_calories(input: &str) -> Optio
     top_three_elves
         .into_iter()
         .map(|top_calories| {
-            (&elves)
-                .into_iter()
+            elves
+                .iter()
                 .position(|elf_calories| elf_calories == &top_calories)
         })
         .collect()
@@ -69,8 +69,7 @@ fn sum_calories_by_elf(input: &str) -> Vec<u32> {
         .map(|inventory| {
             inventory
                 .lines()
-                .map(|calories| calories.parse::<u32>())
-                .flatten()
+                .flat_map(|calories| calories.parse::<u32>())
                 .sum()
         })
         .collect()
@@ -82,7 +81,7 @@ fn top_three_elves(input: &str) -> Vec<u32> {
         .into_iter()
         .sorted_by(|a, b| Ord::cmp(b, a))
         .take(3)
-        .collect::<Vec<u32>>()
+        .collect()
 }
 
 //
