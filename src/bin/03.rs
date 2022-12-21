@@ -26,16 +26,17 @@ pub fn part_two(input: &str) -> Option<u32> {
 fn sum_of_the_priorities_of_item_type_that_appears_in_both_compartments_of_each_rucksack(
     input: &str,
 ) -> Option<u32> {
-    use itertools::Itertools;
+    use std::collections::HashSet;
+
     let letter_to_priority = generate_letter_to_priority();
     input
         .lines()
         .flat_map(|rucksack| {
             let (left, right) = rucksack.split_at(rucksack.len() / 2);
-            left.chars()
-                .filter(|item| right.contains(*item))
-                .unique()
-                .collect_vec()
+            let left_set: HashSet<char> = left.chars().collect();
+            let right_set: HashSet<char> = right.chars().collect();
+            let common_itmes: Vec<char> = left_set.intersection(&right_set).cloned().collect();
+            common_itmes
         })
         .map(|item| *letter_to_priority.get(&item).unwrap())
         .map(|priority| Some(priority as u32))
