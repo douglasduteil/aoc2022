@@ -204,6 +204,17 @@ Do you have aoc-specific crate recommendations? [Share them!](https://github.com
 
 -   **Integer overflows:** This template uses 32-bit integers by default because it is generally faster - for example when packed in large arrays or structs - than using 64-bit integers everywhere. For some problems, solutions for real input might exceed 32-bit integer space. While this is checked and panics in `debug` mode, integers [wrap](https://doc.rust-lang.org/book/ch03-02-data-types.html#integer-overflow) in `release` mode, leading to wrong output when running your solution.
 
+## Inspiring solutions
+
+- https://github.com/hxhelm/aoc2022 (day 7+)
+- https://github.com/nmhanson/aoc2022  (day 8+)
+- https://github.com/fspoettel/advent-of-code-2022 (day 20+)
+- https://github.com/tguichaoua/advent-of-code-2022-rust (day 18+)
+- https://github.com/rumpl/aoc2022 (day 3+)
+- https://github.com/tometo-dev/advent-of-code (day 11+)
+- https://github.com/peteanning/advent-of-code/blob/main/2022/rust (day 7+)
+
+
 ## Footnotes
 
 [^1]: The session cookie might expire after a while (~1 month) which causes the downloads to fail. To fix this issue, refresh the `.adventofcode.session` file.
