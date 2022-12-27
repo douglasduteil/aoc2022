@@ -2,7 +2,6 @@
  * This file contains template code.
  * There is no need to edit this file unless you want to change template functionality.
  */
-// use advent_of_code;
 use std::process;
 
 struct Args {
