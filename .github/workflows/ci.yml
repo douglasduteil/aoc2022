@@ -33,4 +33,4 @@ jobs:
         steps:
             - uses: actions/checkout@v3
             - name: cargo fmt
-              run: cargo fmt --check
+              run: cargo fmt --all --check

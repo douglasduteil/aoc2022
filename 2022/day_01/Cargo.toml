@@ -1,0 +1,12 @@
+[package]
+name = "day_2022_01"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+advent_of_code = { path = "../../advent_of_code" }
+itertools = "0.10.5"
+
+[lib]
+name = "puzzles"
+path = "src/lib.rs"

@@ -5,13 +5,15 @@
 Solutions for [Advent of Code](https://adventofcode.com/) in [Rust](https://www.rust-lang.org/).
 
 <!--- advent_readme_stars table --->
+
 ## 2022 Results
 
-| Day | Part 1 | Part 2 |
-| :---: | :---: | :---: |
-| [Day 1](https://adventofcode.com/2022/day/1) | ⭐ | ⭐ |
-| [Day 2](https://adventofcode.com/2022/day/2) | ⭐ | ⭐ |
-| [Day 3](https://adventofcode.com/2022/day/3) | ⭐ | ⭐ |
+|                     Day                      | Part 1 | Part 2 |
+| :------------------------------------------: | :----: | :----: |
+| [Day 1](https://adventofcode.com/2022/day/1) |   ⭐   |   ⭐   |
+| [Day 2](https://adventofcode.com/2022/day/2) |   ⭐   |   ⭐   |
+| [Day 3](https://adventofcode.com/2022/day/3) |   ⭐   |   ⭐   |
+
 <!--- advent_readme_stars table --->
 
 ---
@@ -25,9 +27,7 @@ Solutions for [Advent of Code](https://adventofcode.com/) in [Rust](https://www.
 cargo scaffold <day>
 
 # output:
-# Created module "src/bin/01.rs"
-# Created empty input file "src/inputs/01.txt"
-# Created empty example file "src/examples/01.txt"
+# Created workspace "2022/day_01"
 # ---
 # 🎄 Type `cargo solve 01` to run your solution.
 ```
@@ -66,7 +66,7 @@ Puzzle descriptions are stored in `src/puzzles` as markdown files. Puzzle inputs
 ### Run solutions for a day
 
 ```sh
-# example: `cargo solve 01`
+# example: `cargo solve day_2022_01`
 cargo solve <day>
 
 # output:
@@ -113,6 +113,7 @@ _Total timing_ is computed from individual solution _timings_ and excludes as mu
 
 ```sh
 cargo test
+cargo watch -C day_2022_01 -x test
 ```
 
 To run tests for a specific day, append `--bin <day>`, e.g. `cargo test --bin 01`. You can further scope it down to a specific part, e.g. `cargo test --bin 01 part_one`.
@@ -206,14 +207,13 @@ Do you have aoc-specific crate recommendations? [Share them!](https://github.com
 
 ## Inspiring solutions
 
-- https://github.com/hxhelm/aoc2022 (day 7+)
-- https://github.com/nmhanson/aoc2022  (day 8+)
-- https://github.com/fspoettel/advent-of-code-2022 (day 20+)
-- https://github.com/tguichaoua/advent-of-code-2022-rust (day 18+)
-- https://github.com/rumpl/aoc2022 (day 3+)
-- https://github.com/tometo-dev/advent-of-code (day 11+)
-- https://github.com/peteanning/advent-of-code/blob/main/2022/rust (day 7+)
-
+-   https://github.com/hxhelm/aoc2022 (day 7+)
+-   https://github.com/nmhanson/aoc2022 (day 8+)
+-   https://github.com/fspoettel/advent-of-code-2022 (day 20+)
+-   https://github.com/tguichaoua/advent-of-code-2022-rust (day 18+)
+-   https://github.com/rumpl/aoc2022 (day 3+)
+-   https://github.com/tometo-dev/advent-of-code (day 11+)
+-   https://github.com/peteanning/advent-of-code/blob/main/2022/rust (day 7+)
 
 ## Footnotes
 

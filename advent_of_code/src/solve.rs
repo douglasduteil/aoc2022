@@ -1,7 +1,7 @@
 #[macro_export]
 macro_rules! solve {
     ($part:expr, $solver:ident, $input:expr) => {{
-        use aoc_cli::{ANSI_BOLD, ANSI_ITALIC, ANSI_RESET};
+        use advent_of_code::{ANSI_BOLD, ANSI_ITALIC, ANSI_RESET};
         use std::fmt::Display;
         use std::time::Instant;
 

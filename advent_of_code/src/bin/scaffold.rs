@@ -5,116 +5,108 @@
 use std::{
     fs::{File, OpenOptions},
     io::Write,
-    process,
+    path::PathBuf,
+    process::{self},
 };
 
-const MODULE_TEMPLATE: &str = r###"fn main() {
-    let input = &advent_of_code::read_file("inputs", DAY);
-    advent_of_code::solve!(1, part_one, input);
-    advent_of_code::solve!(2, part_two, input);
+use advent_of_code::helpers::LATEST_AOC_YEAR;
+
+struct Args {
+    day: u8,
+    year: Option<u16>,
 }
 
-//
-
-pub fn part_one(input: &str) -> Option<u32> {
-    None
-}
-
-pub fn part_two(input: &str) -> Option<u32> {
-    None
-}
-
-//
-//
-//
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_part_one() {
-        let input = advent_of_code::read_file("examples", DAY);
-        assert_eq!(part_one(&input), None);
-    }
-
-    #[test]
-    fn test_part_two() {
-        let input = advent_of_code::read_file("examples", DAY);
-        assert_eq!(part_two(&input), None);
-    }
-}
-"###;
-
-fn parse_args() -> Result<u8, pico_args::Error> {
+fn parse_args() -> Result<Args, pico_args::Error> {
     let mut args = pico_args::Arguments::from_env();
-    args.free_from_str()
-}
 
-fn safe_create_file(path: &str) -> Result<File, std::io::Error> {
-    OpenOptions::new().write(true).create_new(true).open(path)
+    let year = args.opt_value_from_str::<[&str; 2], u16>(["-y", "--year"])?;
+    Ok(Args {
+        day: args.free_from_str()?,
+        year,
+    })
 }
 
 fn create_file(path: &str) -> Result<File, std::io::Error> {
     OpenOptions::new().write(true).create(true).open(path)
 }
 
+fn replace_module_name(path: &str, name: &str) {
+    let contents =
+        std::fs::read_to_string(path).expect("Should have been able to read the file : '{path}");
+
+    match create_file(path)
+        .unwrap()
+        .write(contents.replace("%%NAME%%", name).as_bytes())
+    {
+        Ok(_) => {
+            println!("Edited {path}");
+        }
+        Err(e) => {
+            eprintln!("Failed to edit : {path}");
+        }
+    }
+}
+
 fn main() {
-    let day = match parse_args() {
-        Ok(day) => day,
-        Err(_) => {
-            eprintln!("Need to specify a day (as integer). example: `cargo scaffold 7`");
+    let args = match parse_args() {
+        Ok(args) => args,
+        Err(e) => {
+            eprintln!("Failed to process arguments:\n  {}", e);
             process::exit(1);
         }
     };
 
-    let day_padded = format!("{:02}", day);
+    let year = args.year.unwrap_or(LATEST_AOC_YEAR).to_string();
+    let day = format!("day_{:02}", args.day);
+    let module_name = format!("day_{}_{:02}", year, args.day);
 
-    let input_path = format!("src/inputs/{}.txt", day_padded);
-    let example_path = format!("src/examples/{}.txt", day_padded);
-    let module_path = format!("src/bin/{}.rs", day_padded);
+    let cwd = PathBuf::from(year);
+    let module_path = cwd.join(day);
 
-    let mut file = match safe_create_file(&module_path) {
-        Ok(file) => file,
-        Err(e) => {
-            eprintln!("Failed to create module file: {}", e);
-            process::exit(1);
-        }
-    };
+    //
 
-    match file.write_all(MODULE_TEMPLATE.replace("DAY", &day.to_string()).as_bytes()) {
-        Ok(_) => {
-            println!("Created module file \"{}\"", &module_path);
-        }
-        Err(e) => {
-            eprintln!("Failed to write module contents: {}", e);
-            process::exit(1);
-        }
+    if module_path.exists() {
+        eprintln!("destination `{}` already exists", module_path.display());
+        process::exit(1);
     }
 
-    match create_file(&input_path) {
-        Ok(_) => {
-            println!("Created empty input file \"{}\"", &input_path);
-        }
-        Err(e) => {
-            eprintln!("Failed to create input file: {}", e);
-            process::exit(1);
-        }
-    }
+    println!("$ mkdir -p {:?}", module_path.join("src"));
+    std::fs::create_dir_all(module_path.join("src")).unwrap();
 
-    match create_file(&example_path) {
-        Ok(_) => {
-            println!("Created empty example file \"{}\"", &example_path);
-        }
-        Err(e) => {
-            eprintln!("Failed to create example file: {}", e);
-            process::exit(1);
-        }
-    }
+    //
+
+    let root_files = std::fs::read_dir(PathBuf::from(".templates/")).unwrap();
+    let src_files = std::fs::read_dir(PathBuf::from(".templates/src")).unwrap();
+
+    root_files
+        .chain(src_files)
+        .flat_map(|res| res.map(|e| e.path()))
+        .filter(|meta| meta.is_file())
+        .map(|path| {
+            (
+                path.clone(),
+                module_path.join(path.strip_prefix(".templates/").unwrap()), // .strip_prefix("./.template").unwrap()),
+            )
+        })
+        .for_each(|(from, to)| {
+            println!("$ cp {} {}", from.display(), to.display());
+            std::fs::copy(from, to).unwrap();
+        });
+
+    //
+
+    replace_module_name(
+        &module_path.join("Cargo.toml").to_string_lossy(),
+        &module_name,
+    );
+
+    //
+
+    println!("Created workspace \"{}\"", &module_path.to_string_lossy());
 
     println!("---");
     println!(
         "🎄 Type `cargo solve {}` to run your solution.",
-        &day_padded
+        &module_name
     );
 }

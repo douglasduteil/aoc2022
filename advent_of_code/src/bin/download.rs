@@ -4,6 +4,8 @@
  */
 use std::process;
 
+use advent_of_code::helpers::LATEST_AOC_YEAR;
+
 struct Args {
     day: u8,
     year: Option<u16>,
@@ -31,7 +33,9 @@ fn main() {
         process::exit(1);
     }
 
-    match advent_of_code::download(args.day, args.year) {
+    let year = args.year.unwrap_or(LATEST_AOC_YEAR);
+
+    match advent_of_code::download(args.day, year) {
         Ok(cmd_output) => {
             if !cmd_output.status.success() {
                 process::exit(1);

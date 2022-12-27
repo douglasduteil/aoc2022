@@ -5,40 +5,38 @@
 */
 use std::env;
 use std::fs;
+use std::path;
+use std::{
+    fmt::Display,
+    fs::create_dir_all,
+    process::{Command, Output, Stdio},
+};
 
 pub mod helpers;
+pub mod solve;
 
 pub const ANSI_ITALIC: &str = "\x1b[3m";
 pub const ANSI_BOLD: &str = "\x1b[1m";
 pub const ANSI_RESET: &str = "\x1b[0m";
 
-#[macro_export]
-macro_rules! solve {
-    ($part:expr, $solver:ident, $input:expr) => {{
-        use advent_of_code::{ANSI_BOLD, ANSI_ITALIC, ANSI_RESET};
-        use std::fmt::Display;
-        use std::time::Instant;
+pub fn read_input() -> String {
+    let cwd = env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR not found in env");
+    let filepath = path::Path::new(&cwd).join("input.txt");
+    let error_msg = format!(
+        "Could not open input file : {}",
+        &filepath.to_string_lossy()
+    );
+    fs::read_to_string(&filepath).expect(&error_msg)
+}
 
-        fn print_result<T: Display>(func: impl FnOnce(&str) -> Option<T>, input: &str) {
-            let timer = Instant::now();
-            let result = func(input);
-            let elapsed = timer.elapsed();
-            match result {
-                Some(result) => {
-                    println!(
-                        "{} {}(elapsed: {:.2?}){}",
-                        result, ANSI_ITALIC, elapsed, ANSI_RESET
-                    );
-                }
-                None => {
-                    println!("not solved.")
-                }
-            }
-        }
-
-        println!("🎄 {}Part {}{} 🎄", ANSI_BOLD, $part, ANSI_RESET);
-        print_result($solver, $input);
-    }};
+pub fn read_example() -> String {
+    let cwd = env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR not found in env");
+    let filepath = path::Path::new(&cwd).join("example.txt");
+    let error_msg = format!(
+        "Could not open input file : {}",
+        &filepath.to_string_lossy()
+    );
+    fs::read_to_string(&filepath).expect(&error_msg)
 }
 
 pub fn read_file(folder: &str, day: u8) -> String {
@@ -124,12 +122,6 @@ mod tests {
     }
 }
 
-use std::{
-    fmt::Display,
-    fs::create_dir_all,
-    process::{Command, Output, Stdio},
-};
-
 pub enum AocCliError {
     CommandNotFound,
     CommandNotCallable,
@@ -158,16 +150,16 @@ pub fn check() -> Result<(), AocCliError> {
     Ok(())
 }
 
-pub fn read(day: u8, year: Option<u16>) -> Result<Output, AocCliError> {
+pub fn read(day: u8, year: u16) -> Result<Output, AocCliError> {
     // TODO: output local puzzle if present.
     let args = build_args("read", &[], day, year);
     call_aoc_cli(&args)
 }
 
-pub fn download(day: u8, year: Option<u16>) -> Result<Output, AocCliError> {
-    let input_path = get_input_path(day);
+pub fn download(day: u8, year: u16) -> Result<Output, AocCliError> {
+    let input_path = get_input_path(year, day);
 
-    let puzzle_path = get_puzzle_path(day);
+    let puzzle_path = get_puzzle_path(year, day);
     create_dir_all("src/puzzles").map_err(|_| AocCliError::IoError)?;
 
     let args = build_args(
@@ -195,23 +187,21 @@ pub fn download(day: u8, year: Option<u16>) -> Result<Output, AocCliError> {
     }
 }
 
-fn get_input_path(day: u8) -> String {
+fn get_input_path(year: u16, day: u8) -> String {
     let day_padded = format!("{:02}", day);
-    format!("src/inputs/{}.txt", day_padded)
+    format!("{}/day_{}/input.txt", year, day_padded)
 }
 
-fn get_puzzle_path(day: u8) -> String {
+fn get_puzzle_path(year: u16, day: u8) -> String {
     let day_padded = format!("{:02}", day);
-    format!("src/puzzles/{}.md", day_padded)
+    format!("{}/day_{}/README.md", year, day_padded)
 }
 
-fn build_args(command: &str, args: &[String], day: u8, year: Option<u16>) -> Vec<String> {
+fn build_args(command: &str, args: &[String], day: u8, year: u16) -> Vec<String> {
     let mut cmd_args = args.to_vec();
 
-    if let Some(year) = year {
-        cmd_args.push("--year".into());
-        cmd_args.push(year.to_string());
-    }
+    cmd_args.push("--year".into());
+    cmd_args.push(year.to_string());
 
     cmd_args.append(&mut vec!["--day".into(), day.to_string(), command.into()]);
 
