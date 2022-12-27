@@ -2,7 +2,7 @@
  * This file contains template code.
  * There is no need to edit this file unless you want to change template functionality.
  */
-use advent_of_code::aoc_cli;
+// use advent_of_code;
 use std::process;
 
 struct Args {
@@ -27,12 +27,12 @@ fn main() {
         }
     };
 
-    if aoc_cli::check().is_err() {
+    if advent_of_code::check().is_err() {
         eprintln!("command \"aoc\" not found or not callable. Try running \"cargo install aoc-cli\" to install it.");
         process::exit(1);
     }
 
-    match aoc_cli::download(args.day, args.year) {
+    match advent_of_code::download(args.day, args.year) {
         Ok(cmd_output) => {
             if !cmd_output.status.success() {
                 process::exit(1);

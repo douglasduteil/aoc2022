@@ -4,8 +4,16 @@ version = 3
 
 [[package]]
 name = "advent_of_code"
+version = "0.1.0"
+dependencies = [
+ "pico-args",
+]
+
+[[package]]
+name = "douglasduteil---advent_of_code"
 version = "0.8.0"
 dependencies = [
+ "advent_of_code",
  "itertools",
  "pico-args",
 ]
