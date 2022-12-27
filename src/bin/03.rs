@@ -49,30 +49,15 @@ fn sum_of_the_priorities_of_item_type_that_corresponds_to_the_badges_of_each_thr
 ) -> Option<u32> {
     use itertools::Itertools;
 
-    let letter_to_priority = generate_letter_to_priority();
-
     input
         .lines()
-        .chunks(3)
-        .into_iter()
-        .map(|team_of_3_rucksack| {
-            // HACK(douglasduteil): Chunk is not Debug friendly...
-            // HACK(douglasduteil): Chunk doesn't have a fixed size...
-            let mut chunk_it = team_of_3_rucksack;
-            match [chunk_it.next(), chunk_it.next(), chunk_it.next()] {
-                [Some(rucksack_1), Some(rucksack_2), Some(rucksack_3)] => {
-                    [rucksack_1, rucksack_2, rucksack_3]
-                }
-                _ => ["", "", ""],
-            }
-        })
-        .flat_map(|[rucksack_1, rucksack_2, rucksack_3]| {
+        .tuples::<(&str, &str, &str)>()
+        .flat_map(|(rucksack_1, rucksack_2, rucksack_3)| {
             rucksack_1
                 .chars()
                 .find(|item| rucksack_2.contains(*item) && rucksack_3.contains(*item))
         })
-        .map(|item| *letter_to_priority.get(&item).unwrap())
-        .map(|priority| Some(priority as u32))
+        .map(|item| Some(ascii_char_to_priority(item)))
         .sum()
 }
 
@@ -90,6 +75,17 @@ fn generate_letter_to_priority() -> std::collections::HashMap<char, usize> {
         .collect::<HashMap<char, usize>>()
 }
 
+fn ascii_char_to_priority(character: char) -> u32 {
+    // ascii 'A' starts at 65, mapping to values 27-52
+    const UPPERCASE_SUBTRAHEND: u8 = b'A' - 27;
+    // ascii 'a' starts at 97, mapping to values 0-26
+    const LOWERCASE_SUBTRAHEND: u8 = b'a' - 1;
+    match character {
+        _ if character.is_ascii_uppercase() => character as u32 - UPPERCASE_SUBTRAHEND as u32,
+        _ if character.is_ascii_lowercase() => character as u32 - LOWERCASE_SUBTRAHEND as u32,
+        _ => panic!("Unsupported character"),
+    }
+}
 //
 //
 //
