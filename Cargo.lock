@@ -32,10 +32,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "douglasduteil---advent_of_code"
-version = "0.8.0"
+name = "day_2022_03"
+version = "0.1.0"
 dependencies = [
- "pico-args",
+ "advent_of_code",
+ "itertools",
 ]
 
 [[package]]

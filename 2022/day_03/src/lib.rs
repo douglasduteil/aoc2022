@@ -1,9 +1,3 @@
-fn main() {
-    let input = &advent_of_code::read_file("inputs", 3);
-    advent_of_code::solve!(1, part_one, input);
-    advent_of_code::solve!(2, part_two, input);
-}
-
 //
 
 pub fn part_one(input: &str) -> Option<u32> {
@@ -84,25 +78,5 @@ fn ascii_char_to_priority(character: char) -> u32 {
         _ if character.is_ascii_uppercase() => character as u32 - UPPERCASE_SUBTRAHEND as u32,
         _ if character.is_ascii_lowercase() => character as u32 - LOWERCASE_SUBTRAHEND as u32,
         _ => panic!("Unsupported character"),
-    }
-}
-//
-//
-//
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_part_one() {
-        let input = advent_of_code::read_file("examples", 3);
-        assert_eq!(part_one(&input), Some(157));
-    }
-
-    #[test]
-    fn test_part_two() {
-        let input = advent_of_code::read_file("examples", 3);
-        assert_eq!(part_two(&input), Some(70));
     }
 }

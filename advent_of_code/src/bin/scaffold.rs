@@ -41,7 +41,7 @@ fn replace_module_name(path: &str, name: &str) {
         Ok(_) => {
             println!("Edited {path}");
         }
-        Err(e) => {
+        Err(_e) => {
             eprintln!("Failed to edit : {path}");
         }
     }
