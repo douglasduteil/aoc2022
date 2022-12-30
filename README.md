@@ -208,6 +208,7 @@ Do you have aoc-specific crate recommendations? [Share them!](https://github.com
 ## Inspiring solutions
 
 -   https://github.com/hxhelm/aoc2022 (day 7+)
+-   https://github.com/SinshiSmith/aoc (day 15+)
 -   https://github.com/nmhanson/aoc2022 (day 8+)
 -   https://github.com/fspoettel/advent-of-code-2022 (day 20+)
 -   https://github.com/tguichaoua/advent-of-code-2022-rust (day 18+)
