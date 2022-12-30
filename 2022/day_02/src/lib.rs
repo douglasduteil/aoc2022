@@ -1,135 +1,56 @@
 //
 
-use std::str::FromStr;
+mod beats;
+mod hand_shape;
+mod round;
+mod strategy;
+
+//
+
+use std::convert::Infallible;
+
+use crate::round::Round;
+
+//
 
 pub fn part_one(input: &str) -> Option<u32> {
-    total_score_if_one_trust_the_strategy_guide(input)
+    let line_to_round = |round_line: &str| -> Result<Round, Infallible> {
+        let (opponent_letter, player_move) = round_line
+            .split_once(" ")
+            .expect("Could not split opponent and player letters");
+        Ok(Round {
+            opponent: opponent_letter.parse()?,
+            player: player_move.parse()?,
+        })
+    };
+
+    input
+        .lines()
+        .flat_map(line_to_round)
+        .map(|round| round.get_player_score())
+        .map(Some)
+        .sum()
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    total_score_if_one_understand_the_strategy_guide(input)
-}
+    use crate::strategy::Strategy;
 
-//
+    let line_to_round = |round_line: &str| -> Result<Round, Infallible> {
+        let (opponent_letter, strategy_letter) = round_line
+            .split_once(" ")
+            .expect("Could not split opponent and strategy letters");
+        let opponent = opponent_letter.parse()?;
+        let player = strategy_letter
+            .parse::<Strategy>()
+            .unwrap()
+            .winning_hand(&opponent);
+        Ok(Round { opponent, player })
+    };
 
-#[derive(Debug, PartialEq)]
-enum RoundResult {
-    Lost = 0,
-    Draw = 3,
-    Won = 6,
-}
-
-//
-//
-//
-
-enum Hand {
-    Rock,
-    Paper,
-    Scissors,
-}
-
-impl FromStr for Hand {
-    type Err = String;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "A" | "X" => Ok(Hand::Rock),
-            "B" | "Y" => Ok(Hand::Paper),
-            "C" | "Z" => Ok(Hand::Scissors),
-            _ => Err(format!("'{}' is unknown", s)),
-        }
-    }
-}
-
-//
-//
-//
-
-enum Strategy {
-    RoundResult(RoundResult),
-}
-
-impl FromStr for Strategy {
-    type Err = ();
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "X" => Ok(Strategy::RoundResult(RoundResult::Lost)),
-            "Y" => Ok(Strategy::RoundResult(RoundResult::Draw)),
-            "Z" => Ok(Strategy::RoundResult(RoundResult::Won)),
-            _ => Err(()),
-        }
-    }
-}
-
-//
-//
-//
-
-pub fn total_score_if_one_trust_the_strategy_guide(input: &str) -> Option<u32> {
-    input.lines().map(guested_strategy).sum()
-}
-
-fn guested_strategy(round: &str) -> Option<u32> {
-    let (opponent_letter, your_letter) = round.split_once(' ')?;
-    let your_hand = your_letter.parse().unwrap();
-    let opponent_hand = opponent_letter.parse().unwrap();
-    let hand_score = score_from_hand(&your_hand);
-    let round_score = score_from_matchups(&opponent_hand, &your_hand);
-    Some((hand_score as u32) + (round_score as u32))
-}
-
-//
-
-pub fn total_score_if_one_understand_the_strategy_guide(input: &str) -> Option<u32> {
-    input.lines().map(real_strategy).sum()
-}
-
-fn real_strategy(round: &str) -> Option<u32> {
-    let (opponent_letter, strategy_letter) = round.split_once(' ')?;
-    let Strategy::RoundResult(round_result) = strategy_letter.parse().unwrap();
-    let opponent_hand = opponent_letter.parse().unwrap();
-    let your_hand = strategic_hand(&opponent_hand, &round_result);
-    let hand_score = score_from_hand(&your_hand);
-    let round_score = score_from_matchups(&opponent_hand, &your_hand);
-    Some((hand_score as u32) + (round_score as u32))
-}
-
-//
-//
-//
-
-fn score_from_hand(hand: &Hand) -> usize {
-    match hand {
-        Hand::Paper => 2,
-        Hand::Rock => 1,
-        Hand::Scissors => 3,
-    }
-}
-
-fn score_from_matchups(opponent_hand: &Hand, your_hand: &Hand) -> RoundResult {
-    match (opponent_hand, your_hand) {
-        (Hand::Paper, Hand::Rock) => RoundResult::Lost,
-        (Hand::Paper, Hand::Scissors) => RoundResult::Won,
-        (Hand::Rock, Hand::Paper) => RoundResult::Won,
-        (Hand::Rock, Hand::Scissors) => RoundResult::Lost,
-        (Hand::Scissors, Hand::Paper) => RoundResult::Lost,
-        (Hand::Scissors, Hand::Rock) => RoundResult::Won,
-        _ => RoundResult::Draw,
-    }
-}
-
-fn strategic_hand(opponent_hand: &Hand, round: &RoundResult) -> Hand {
-    match (opponent_hand, round) {
-        (Hand::Paper, RoundResult::Draw) => Hand::Paper,
-        (Hand::Paper, RoundResult::Lost) => Hand::Rock,
-        (Hand::Paper, RoundResult::Won) => Hand::Scissors,
-        //
-        (Hand::Rock, RoundResult::Draw) => Hand::Rock,
-        (Hand::Rock, RoundResult::Lost) => Hand::Scissors,
-        (Hand::Rock, RoundResult::Won) => Hand::Paper,
-        //
-        (Hand::Scissors, RoundResult::Draw) => Hand::Scissors,
-        (Hand::Scissors, RoundResult::Lost) => Hand::Paper,
-        (Hand::Scissors, RoundResult::Won) => Hand::Rock,
-    }
+    input
+        .lines()
+        .flat_map(line_to_round)
+        .map(|round| round.get_player_score())
+        .map(Some)
+        .sum()
 }
