@@ -1,7 +1,5 @@
 //
 
-use std::{convert::Infallible, ops::RangeInclusive};
-
 pub fn part_one(input: &str) -> Option<u32> {
     Some(
         input
@@ -18,9 +16,11 @@ pub fn part_two(_input: &str) -> Option<u32> {
 
 //
 
+use std::{convert::Infallible, ops::RangeInclusive, str::FromStr};
+
 struct Elf(RangeInclusive<usize>);
 
-impl std::str::FromStr for Elf {
+impl FromStr for Elf {
     type Err = Infallible;
 
     fn from_str(section: &str) -> Result<Self, Self::Err> {
@@ -45,7 +45,7 @@ impl ElfPair {
     }
 }
 
-impl std::str::FromStr for ElfPair {
+impl FromStr for ElfPair {
     type Err = Infallible;
 
     fn from_str(section_pair: &str) -> Result<Self, Self::Err> {
