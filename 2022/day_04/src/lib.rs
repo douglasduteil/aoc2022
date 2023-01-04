@@ -36,9 +36,9 @@ struct ElfPair(Elf, Elf);
 
 impl ElfPair {
     fn is_fully_overlapping(&self) -> bool {
-        let (first, second) = (&self.0, &self.1);
-        let first = &first.0;
-        let second = &second.0;
+        let ElfPair(first, second) = self;
+        let Elf(first) = first;
+        let Elf(second) = second;
         let first_contains_second = first.contains(second.start()) && first.contains(second.end());
         let second_contains_first = second.contains(first.start()) && second.contains(first.end());
         first_contains_second || second_contains_first
