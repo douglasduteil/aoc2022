@@ -12,7 +12,7 @@ pub fn part_one(input: &str) -> Option<u32> {
             let common_itmes: Vec<char> = left_set.intersection(&right_set).cloned().collect();
             common_itmes
         })
-        .map(|char| char_to_priority(char))
+        .map(char_to_priority)
         .map(Some)
         .sum()
 }
@@ -28,7 +28,7 @@ pub fn part_two(input: &str) -> Option<u32> {
                 .chars()
                 .find(|char| rucksack_2.contains(*char) && rucksack_3.contains(*char))
         })
-        .map(|char| char_to_priority(char))
+        .map(char_to_priority)
         .map(Some)
         .sum()
 }
