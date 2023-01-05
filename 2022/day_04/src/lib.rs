@@ -10,8 +10,14 @@ pub fn part_one(input: &str) -> Option<u32> {
     )
 }
 
-pub fn part_two(_input: &str) -> Option<u32> {
-    None
+pub fn part_two(input: &str) -> Option<u32> {
+    Some(
+        input
+            .lines()
+            .flat_map(|pairs| pairs.parse())
+            .filter(|pairs: &ElfPair| pairs.is_overlapping())
+            .count() as u32,
+    )
 }
 
 //
@@ -35,6 +41,13 @@ impl FromStr for Elf {
 struct ElfPair(Elf, Elf);
 
 impl ElfPair {
+    fn is_overlapping(&self) -> bool {
+        let ElfPair(first, second) = self;
+        let Elf(first) = first;
+        let Elf(second) = second;
+        first.to_owned().any(|section| second.contains(&section))
+    }
+
     fn is_fully_overlapping(&self) -> bool {
         let ElfPair(first, second) = self;
         let Elf(first) = first;
