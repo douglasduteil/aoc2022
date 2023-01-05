@@ -36,8 +36,21 @@ pub fn part_one(input: &str) -> Option<String> {
     )
 }
 
-pub fn part_two(_input: &str) -> Option<String> {
-    None
+pub fn part_two(input: &str) -> Option<String> {
+    let (crate_stacks, rearrangement_procedure) = input_parser(input);
+
+    let mut crates = crate_stacks;
+    for Procedure { moves, from, to } in rearrangement_procedure.into_iter() {
+        let moved_crates: Vec<char> = crates[from].drain(..moves).collect();
+        for crate_ in moved_crates.iter().rev() {
+            crates[to].push_front(*crate_);
+        }
+    }
+    Some(
+        crates
+            .into_iter()
+            .fold(String::new(), |tops, stack| tops + &stack[0].to_string()),
+    )
 }
 
 //

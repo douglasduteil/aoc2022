@@ -12,12 +12,12 @@ mod tests {
     #[test]
     fn test_part_one() {
         let input = advent_of_code::read_example();
-        assert_eq!(part_one(&input), Some("CMZ".to_string()));
+        assert_eq!(part_one(&input), Some("CMZ".to_owned()));
     }
 
     #[test]
     fn test_part_two() {
         let input = advent_of_code::read_example();
-        assert_eq!(part_two(&input), None);
+        assert_eq!(part_two(&input), Some("MCD".to_owned()));
     }
 }
