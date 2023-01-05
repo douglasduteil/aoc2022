@@ -16,7 +16,7 @@ use crate::round::Round;
 pub fn part_one(input: &str) -> Option<u32> {
     let line_to_round = |round_line: &str| -> Result<Round, Infallible> {
         let (opponent_letter, player_move) = round_line
-            .split_once(" ")
+            .split_once(' ')
             .expect("Could not split opponent and player letters");
         Ok(Round {
             opponent: opponent_letter.parse()?,
@@ -37,7 +37,7 @@ pub fn part_two(input: &str) -> Option<u32> {
 
     let line_to_round = |round_line: &str| -> Result<Round, Infallible> {
         let (opponent_letter, strategy_letter) = round_line
-            .split_once(" ")
+            .split_once(' ')
             .expect("Could not split opponent and strategy letters");
         let opponent = opponent_letter.parse()?;
         let player = strategy_letter

@@ -4,7 +4,7 @@ use std::convert::Infallible;
 
 //
 
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Copy, Clone, PartialEq, Eq)]
 pub enum HandShape {
     Rock = 1,
     Paper = 2,
