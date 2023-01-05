@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 advent_of_code = { path = "../../advent_of_code" }
+nom = "7.1.2"
 
 [lib]
 name = "puzzles"
