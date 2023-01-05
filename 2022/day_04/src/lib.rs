@@ -45,7 +45,8 @@ impl ElfPair {
         let ElfPair(first, second) = self;
         let Elf(first) = first;
         let Elf(second) = second;
-        first.to_owned().any(|section| second.contains(&section))
+
+        first.start() <= second.end() && first.end() >= second.start()
     }
 
     fn is_fully_overlapping(&self) -> bool {
