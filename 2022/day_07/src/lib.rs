@@ -26,8 +26,25 @@ pub fn part_one(input: &str) -> Option<u32> {
         .sum()
 }
 
-pub fn part_two(_input: &str) -> Option<u32> {
-    None
+pub fn part_two(input: &str) -> Option<u32> {
+    const TOTAL_SPACE: usize = 70_000_000;
+    const UPDATE_SPACE: usize = 30_000_000;
+
+    let terminal_output = input.parse().unwrap_or_else(|err| {
+        eprintln!("Problem parsing arguments: {err}");
+        process::exit(1);
+    });
+
+    let sizes = directories_sizes(terminal_output);
+    let used_space = sizes.get("/").unwrap();
+    let free_space = TOTAL_SPACE - used_space;
+    let min_space_to_delete = UPDATE_SPACE - free_space;
+
+    sizes
+        .iter()
+        .filter(|(_, &size)| size >= min_space_to_delete)
+        .map(|(_, &size)| size as u32)
+        .min()
 }
 
 //
