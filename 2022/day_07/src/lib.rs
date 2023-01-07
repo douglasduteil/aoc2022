@@ -13,11 +13,26 @@ use crate::terminal_output::Content;
 //
 
 pub fn part_one(input: &str) -> Option<u32> {
-    let TerminalOutput(output) = input.parse().unwrap_or_else(|err| {
+    let terminal_output = input.parse().unwrap_or_else(|err| {
         eprintln!("Problem parsing arguments: {err}");
         process::exit(1);
     });
 
+    directories_sizes(terminal_output)
+        .iter()
+        .filter(|(_, &size)| size < 100_000)
+        .map(|(_, &size)| size as u32)
+        .map(Some)
+        .sum()
+}
+
+pub fn part_two(_input: &str) -> Option<u32> {
+    None
+}
+
+//
+
+fn directories_sizes(TerminalOutput(output): TerminalOutput) -> BTreeMap<String, usize> {
     let (_, sizes) = output.iter().fold(
         (PathBuf::from("/"), BTreeMap::<String, usize>::new()),
         |(mut path, mut sizes), command| {
@@ -57,13 +72,4 @@ pub fn part_one(input: &str) -> Option<u32> {
     );
 
     sizes
-        .iter()
-        .filter(|(_, &size)| size < 100_000)
-        .map(|(_, &size)| size as u32)
-        .map(Some)
-        .sum()
-}
-
-pub fn part_two(_input: &str) -> Option<u32> {
-    None
 }
