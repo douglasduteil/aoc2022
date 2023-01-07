@@ -13,7 +13,7 @@ pub fn part_one(input: &str) -> Option<usize> {
         .as_slice()
         .windows(SEQUENCE_LEN)
         .position(|datastream| HashSet::<_>::from_iter(datastream).len() == datastream.len())
-        .and_then(|start| Some(start + SEQUENCE_LEN))
+        .map(|start| start + SEQUENCE_LEN)
 }
 
 pub fn part_two(input: &str) -> Option<usize> {
@@ -25,5 +25,5 @@ pub fn part_two(input: &str) -> Option<usize> {
         .as_slice()
         .windows(SEQUENCE_LEN)
         .position(|datastream| HashSet::<_>::from_iter(datastream).len() == datastream.len())
-        .and_then(|start| Some(start + SEQUENCE_LEN))
+        .map(|start| start + SEQUENCE_LEN)
 }
