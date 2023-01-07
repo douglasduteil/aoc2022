@@ -66,6 +66,7 @@ name = "day_2022_07"
 version = "0.1.0"
 dependencies = [
  "advent_of_code",
+ "nom",
 ]
 
 [[package]]
