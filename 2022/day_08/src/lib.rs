@@ -1,57 +1,67 @@
 //
 
-use std::{convert::Infallible, str::FromStr};
+mod direction;
+mod scenic_score;
+mod tree;
+mod ugrid;
+mod visibility_check;
+
+//
+
+use direction::Direction;
+use tree::Tree;
+use ugrid::UGrid;
 
 //
 
 pub fn part_one(input: &str) -> Option<u32> {
-    let TreeGrid(tree_grid) = input.parse().expect("invalid input");
+    use visibility_check::VisibilityCheck;
 
-    let trees_on_the_edge = tree_grid.len() * 2 + tree_grid[0].len() * 2 - 4;
-    let x_max = tree_grid[0].len();
-    let y_max = tree_grid.len();
-    let visible_interior_trees = tree_grid[..tree_grid.len() - 1]
-        .iter()
-        .enumerate()
-        .skip(1)
-        .flat_map(|(y, rows)| {
-            rows[..rows.len() - 1]
-                .iter()
-                .enumerate()
-                .skip(1)
-                .map(|(x, height)| (x, y, *height))
-                .collect::<Vec<_>>()
-        })
-        .filter(|&(x, y, height)| {
-            false || (0..y).all(|y_| tree_grid[y_][x] < height) //top
-            || (x + 1..x_max).all(|x_| tree_grid[y][x_] < height) // right
-            || (y + 1..y_max).all(|y_| tree_grid[y_][x] < height) // down
-            || (0..x).all(|x_| tree_grid[y][x_] < height) // left
+    let forest: UGrid = input.parse().expect("invalid input");
+
+    let visible_interior_trees = (0..forest.rows * forest.columns)
+        .map(tree_from_forest_id(&forest))
+        .filter(|tree| {
+            let Tree { position, .. } = tree;
+            let &(x, y) = position;
+
+            if x == 0 || x == forest.rows - 1 || y == 0 || y == forest.columns - 1 {
+                // All of the trees around the edge of the grid are *visible*
+                return true;
+            };
+
+            Direction::iter().any(|direction| {
+                VisibilityCheck::in_forest(&forest).is_visible_from_outside(tree, direction)
+            })
         })
         .count();
 
-    Some(trees_on_the_edge as u32 + visible_interior_trees as u32)
+    Some(visible_interior_trees as u32)
 }
 
-pub fn part_two(_input: &str) -> Option<u32> {
-    None
+pub fn part_two(input: &str) -> Option<u32> {
+    use scenic_score::ScenicScore;
+    use visibility_check::VisibilityCheck;
+
+    //
+
+    let forest: UGrid = input.parse().expect("invalid input");
+
+    (0..forest.rows * forest.columns)
+        .map(tree_from_forest_id(&forest))
+        .map(|tree| ScenicScore::calculate_from(&VisibilityCheck::in_forest(&forest), &tree))
+        .max()
 }
 
 //
 
-struct TreeGrid(Vec<Vec<usize>>);
+fn tree_from_forest_id(forest: &UGrid) -> impl Fn(usize) -> Tree + '_ {
+    move |index| {
+        let position = forest.index_to_coord(index);
 
-impl FromStr for TreeGrid {
-    type Err = Infallible;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(TreeGrid(s.lines().fold(Vec::new(), |mut rows, s| {
-            rows.push(
-                s.chars()
-                    .map(|c| c.to_digit(10).unwrap() as usize)
-                    .collect(),
-            );
-            rows
-        })))
+        Tree {
+            position,
+            height: forest[position],
+        }
     }
 }

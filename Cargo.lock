@@ -74,6 +74,7 @@ name = "day_2022_08"
 version = "0.1.0"
 dependencies = [
  "advent_of_code",
+ "itertools",
 ]
 
 [[package]]
