@@ -11,13 +11,15 @@ mod tests {
 
     #[test]
     fn test_part_one() {
-        let input = advent_of_code::read_example();
+        let input = advent_of_code::read_example_("one");
         assert_eq!(part_one(&input), Some(13));
     }
 
     #[test]
     fn test_part_two() {
-        let input = advent_of_code::read_example();
-        assert_eq!(part_two(&input), None);
+        let input = advent_of_code::read_example_("one");
+        assert_eq!(part_two(&input), Some(0));
+        let input = advent_of_code::read_example_("two");
+        assert_eq!(part_two(&input), Some(36));
     }
 }

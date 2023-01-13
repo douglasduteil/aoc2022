@@ -30,8 +30,17 @@ pub fn read_input() -> String {
 }
 
 pub fn read_example() -> String {
+    read_example_("")
+}
+
+pub fn read_example_(suffix: &str) -> String {
     let cwd = env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR not found in env");
-    let filepath = path::Path::new(&cwd).join("example.txt");
+    let example_file = if suffix.is_empty() {
+        "example.txt".to_string()
+    } else {
+        format!("example_{suffix}.txt")
+    };
+    let filepath = path::Path::new(&cwd).join(example_file);
     let error_msg = format!(
         "Could not open input file : {}",
         &filepath.to_string_lossy()
