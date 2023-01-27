@@ -31,7 +31,7 @@ impl FromStr for Instruction {
     type Err = Infallible;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s.trim().split_once(" ") {
+        match s.trim().split_once(' ') {
             Some((_, number)) => Ok(Instruction::Addx(number.parse().unwrap())),
             None => Ok(Instruction::Noop),
         }

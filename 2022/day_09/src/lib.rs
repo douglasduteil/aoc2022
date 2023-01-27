@@ -22,7 +22,7 @@ pub fn part_one(input: &str) -> Option<u32> {
     for motion in series_of_motions {
         for vector in motion.as_vectors() {
             rope.move_head_by(vector);
-            tail_positions.insert(rope.tail().clone());
+            tail_positions.insert(*rope.tail());
         }
     }
 
@@ -38,7 +38,7 @@ pub fn part_two(input: &str) -> Option<u32> {
     for motion in series_of_motions {
         for vector in motion.as_vectors() {
             rope.move_head_by(vector);
-            tail_positions.insert(rope.tail().clone());
+            tail_positions.insert(*rope.tail());
         }
     }
 
