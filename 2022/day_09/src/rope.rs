@@ -27,7 +27,7 @@ impl<const N: usize> Rope<N> {
             let head = self.knots[i - 1];
             let tail = self.knots[i];
             if tail.distance(&head) > 1 {
-                self.knots[i] += Position(head.0 - tail.0, head.1 - tail.1).normalize();
+                self.knots[i] += (head - tail).normalize();
             }
         }
     }

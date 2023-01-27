@@ -1,6 +1,6 @@
 //
 
-use std::ops::AddAssign;
+use std::ops::{AddAssign, Sub};
 
 #[derive(Debug, Eq, Hash, PartialEq, Default, Clone, Copy)]
 pub struct Position(pub isize, pub isize);
@@ -23,6 +23,15 @@ impl AddAssign for Position {
     fn add_assign(&mut self, rhs: Self) {
         self.0 += rhs.0;
         self.1 += rhs.1;
+    }
+}
+//
+
+impl Sub for Position {
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Self(self.0 - rhs.0, self.1 - rhs.1)
     }
 }
 
