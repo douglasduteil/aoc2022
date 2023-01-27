@@ -1,13 +1,28 @@
 //
 
+use std::ops::AddAssign;
+
 #[derive(Debug, Eq, Hash, PartialEq, Default, Clone, Copy)]
 pub struct Position(pub isize, pub isize);
 
 impl Position {
+    pub fn normalize(&self) -> Self {
+        let &Position(x, y) = self;
+        Position(x.clamp(-1, 1), y.clamp(-1, 1))
+    }
     pub fn distance(&self, target: &Position) -> u8 {
         let dx = self.0 - target.0;
         let dy = self.1 - target.1;
         dx.abs().max(dy.abs()) as u8
+    }
+}
+
+//
+
+impl AddAssign for Position {
+    fn add_assign(&mut self, rhs: Self) {
+        self.0 += rhs.0;
+        self.1 += rhs.1;
     }
 }
 
@@ -22,7 +37,26 @@ impl From<(isize, isize)> for Position {
 //
 
 #[cfg(test)]
-mod test_position {
+mod test_add_assign {
+    use super::*;
+
+    #[test]
+    fn test_zero() {
+        let mut x = Position::default();
+        x += Position::default();
+        assert_eq!(x, Position::default());
+    }
+
+    #[test]
+    fn test_one() {
+        let mut x = Position::default();
+        x += Position(1, 1);
+        assert_eq!(x, Position(1, 1));
+    }
+}
+
+#[cfg(test)]
+mod test_distance {
     use super::*;
 
     #[test]

@@ -1,6 +1,8 @@
 //
 
-use std::{num::ParseIntError, ops::RangeInclusive, str::FromStr};
+use std::{iter, num::ParseIntError, ops::RangeInclusive, str::FromStr};
+
+use crate::position::Position;
 
 //
 
@@ -17,6 +19,22 @@ pub enum Motion {
 impl Motion {
     pub fn from_line(s: &str) -> Result<Motion, ParseIntError> {
         Self::from_str(s)
+    }
+
+    pub fn as_vectors(&self) -> impl Iterator<Item = Position> {
+        use Motion::*;
+        let range = match self {
+            Up(steps) | Down(steps) | Right(steps) | Left(steps) => steps.to_owned(),
+        };
+
+        let vector = match self {
+            Up(_) => Position(0, 1),
+            Down(_) => Position(0, -1),
+            Right(_) => Position(1, 0),
+            Left(_) => Position(-1, 0),
+        };
+
+        iter::repeat(vector).take(range.count())
     }
 }
 
@@ -35,6 +53,41 @@ impl FromStr for Motion {
             _ => unreachable!(),
         };
         Ok(motion)
+    }
+}
+
+#[cfg(test)]
+mod test_motion_as_vectors {
+    use super::*;
+
+    #[test]
+    fn test_repeat_up_positions() {
+        let iter = Motion::Up(1..=2).as_vectors();
+        assert_eq!(iter.collect::<Vec<_>>(), &[Position(0, 1), Position(0, 1)])
+    }
+
+    #[test]
+    fn test_repeat_down_positions() {
+        let iter = Motion::Down(1..=2).as_vectors();
+        assert_eq!(
+            iter.collect::<Vec<_>>(),
+            &[Position(0, -1), Position(0, -1)]
+        )
+    }
+
+    #[test]
+    fn test_repeat_left_positions() {
+        let iter = Motion::Left(1..=2).as_vectors();
+        assert_eq!(
+            iter.collect::<Vec<_>>(),
+            &[Position(-1, 0), Position(-1, 0)]
+        )
+    }
+
+    #[test]
+    fn test_repeat_right_positions() {
+        let iter = Motion::Right(1..=2).as_vectors();
+        assert_eq!(iter.collect::<Vec<_>>(), &[Position(1, 0), Position(1, 0)])
     }
 }
 
