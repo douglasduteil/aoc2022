@@ -4,7 +4,7 @@ use std::{num::ParseIntError, ops::RangeInclusive, str::FromStr};
 
 //
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Motion {
     Up(RangeInclusive<usize>),
     Down(RangeInclusive<usize>),
