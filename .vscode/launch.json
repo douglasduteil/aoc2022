@@ -9,7 +9,12 @@
             "request": "launch",
             "name": "Debug unit tests in executable 'advent_of_code'",
             "cargo": {
-                "args": ["test", "--no-run", "--bin=advent_of_code", "--package=advent_of_code"],
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=advent_of_code",
+                    "--package=advent_of_code"
+                ],
                 "filter": {
                     "name": "advent_of_code",
                     "kind": "bin"
@@ -21,23 +26,29 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'advent_of_code'",
+            "name": "Debug executable 'day_2022_11'",
             "cargo": {
-                "args": ["build", "--bin=advent_of_code", "--package=advent_of_code"],
+                "args": ["build", "--bin=day_2022_11", "--package=day_2022_11"],
                 "filter": {
-                    "name": "advent_of_code",
+                    "name": "day_2022_11",
                     "kind": "bin"
                 }
             },
             "args": ["1"],
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}",
+            "env": { "CARGO_MANIFEST_DIR": "2022/day_11" }
         },
         {
             "type": "lldb",
             "request": "launch",
             "name": "Debug unit tests in library 'advent_of_code'",
             "cargo": {
-                "args": ["test", "--no-run", "--lib", "--package=advent_of_code"],
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib",
+                    "--package=advent_of_code"
+                ],
                 "filter": {
                     "name": "advent_of_code",
                     "kind": "lib"

@@ -18,6 +18,6 @@ mod tests {
     #[test]
     fn test_part_two() {
         let input = advent_of_code::read_example();
-        assert_eq!(part_two(&input), None);
+        assert_eq!(part_two(&input), Some(2_713_310_158));
     }
 }

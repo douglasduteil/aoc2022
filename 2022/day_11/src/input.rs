@@ -20,16 +20,16 @@ use crate::monkey::{Operation, Test, Worry};
 //
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
-pub struct Note(pub Vec<Monkey>);
+pub struct Reader(pub Vec<Monkey>);
 
 //
 
-impl FromStr for Note {
+impl FromStr for Reader {
     type Err = String;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match parse(s).finish() {
-            Ok((_, monkeys)) => Ok(Note(monkeys)),
+            Ok((_, monkeys)) => Ok(Reader(monkeys)),
             Err(e) => Err(convert_error(s, e)),
         }
     }
@@ -80,7 +80,7 @@ fn starting_items(input: &str) -> IResult<&str, Vec<Item>> {
             terminated(tag("Starting items:"), space0),
             separated_list0(
                 tag(", "),
-                map(digit1, |value| Item(usize::from_str(value).unwrap())),
+                map(digit1, |value| Item(u64::from_str(value).unwrap())),
             ),
         ),
     )(input)
@@ -112,7 +112,7 @@ fn worry_level(input: &str) -> IResult<&str, Worry> {
         "worry_level",
         alt((
             map(tag("old"), |_| Worry::Old),
-            map(float, |level| Worry::Level(level as usize)),
+            map(digit1, |value| Worry::Level(u64::from_str(value).unwrap())),
         )),
     )(input)
 }
@@ -134,7 +134,7 @@ fn test(input: &str) -> IResult<&str, Test> {
             )),
             |(divisible_by, if_true_monkey_id, if_false_monkey_id)| {
                 Test::DivisibleBy(
-                    usize::from_str(divisible_by).unwrap(),
+                    u64::from_str(divisible_by).unwrap(),
                     (
                         usize::from_str(if_true_monkey_id).unwrap(),
                         usize::from_str(if_false_monkey_id).unwrap(),

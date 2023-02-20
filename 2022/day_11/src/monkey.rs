@@ -9,47 +9,28 @@ pub struct Monkey {
 }
 
 impl Monkey {
-    pub fn inspect_and_throw_items(&self) -> Vec<(usize, Item)> {
-        let Monkey {
-            items,
-            test,
-            operation,
-            ..
-        } = self;
+    pub(crate) fn gets_bored(&self, Item(worry): Item) -> usize {
+        self.test.throw_index(worry)
+    }
 
-        items
-            .iter()
-            .map(|&Item(worry)| {
-                let worry = operation.calc(worry);
-                let worry = worry / 3;
-
-                let index = match test {
-                    Test::DivisibleBy(divisor, (left, right)) => {
-                        if worry % divisor == 0 {
-                            *left
-                        } else {
-                            *right
-                        }
-                    }
-                };
-
-                (index, Item(worry))
-            })
-            .collect()
+    pub(crate) fn inspect(&self, Item(worry): Item) -> Item {
+        Item(self.operation.calc(worry))
     }
 }
 
 //
 
+type WorryType = u64;
+
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq)]
 pub enum Worry {
     #[default]
     Old,
-    Level(usize),
+    Level(WorryType),
 }
 
 impl Worry {
-    fn or(&self, old_value: usize) -> usize {
+    fn or(&self, old_value: WorryType) -> WorryType {
         match self {
             Worry::Old => old_value,
             Worry::Level(value) => *value,
@@ -66,7 +47,7 @@ pub enum Operation {
 }
 
 impl Operation {
-    pub fn calc(&self, old_value: usize) -> usize {
+    pub fn calc(&self, old_value: WorryType) -> WorryType {
         match self {
             Operation::Add(left, right) => left.or(old_value) + right.or(old_value),
             Operation::Multiply(left, right) => left.or(old_value) * right.or(old_value),
@@ -74,47 +55,75 @@ impl Operation {
     }
 }
 
+#[cfg(test)]
+mod test_operation {
+    use super::*;
+
+    #[test]
+    fn test_add_1_2() {
+        let operation = Operation::Add(Worry::Level(1), Worry::Level(2));
+        assert_eq!(operation.calc(42), 3)
+    }
+
+    #[test]
+    fn test_add_old_1() {
+        let operation = Operation::Add(Worry::Old, Worry::Level(1));
+        assert_eq!(operation.calc(42), 43)
+    }
+
+    #[test]
+    fn test_multiply_1_2() {
+        let operation = Operation::Multiply(Worry::Level(1), Worry::Level(2));
+        assert_eq!(operation.calc(42), 2)
+    }
+
+    #[test]
+    fn test_multiply_old_2() {
+        let operation = Operation::Multiply(Worry::Old, Worry::Level(2));
+        assert_eq!(operation.calc(42), 84)
+    }
+}
 //
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum Test {
-    DivisibleBy(usize, (usize, usize)),
+    DivisibleBy(WorryType, (usize, usize)),
+}
+
+impl Test {
+    pub fn throw_index(&self, worry: u64) -> usize {
+        match self {
+            Test::DivisibleBy(divisor, (left, right)) => {
+                if worry % *divisor as u64 == 0 {
+                    *left
+                } else {
+                    *right
+                }
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+mod test_test {
+    use super::*;
+
+    #[test]
+    fn test_8_throw_divisible_by_3_index_1() {
+        let test = Test::DivisibleBy(3, (0, 1));
+        assert_eq!(test.throw_index(8), 1)
+    }
+
+    #[test]
+    fn test_9_throw_divisible_by_3_index_0() {
+        let test = Test::DivisibleBy(3, (0, 1));
+        assert_eq!(test.throw_index(9), 0)
+    }
 }
 
 //
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq)]
-pub struct Item(pub usize);
+pub struct Item(pub WorryType);
 
 //
-
-#[cfg(test)]
-mod test_monkey {
-    use std::vec;
-
-    use super::*;
-
-    #[test]
-    fn test_nothing() {
-        let monkey = Monkey {
-            id: 0,
-            items: vec![],
-            operation: Operation::Add(Worry::Old, Worry::Old),
-            test: Test::DivisibleBy(1, (0, 0)),
-        };
-
-        assert_eq!(monkey.inspect_and_throw_items(), vec![])
-    }
-
-    #[test]
-    fn test_inspect_and_throw_items() {
-        let monkey = Monkey {
-            id: 42,
-            items: vec![Item(3)],
-            operation: Operation::Add(Worry::Old, Worry::Old),
-            test: Test::DivisibleBy(2, (3, 4)),
-        };
-
-        assert_eq!(monkey.inspect_and_throw_items(), vec![(3, Item(2))])
-    }
-}
