@@ -23,15 +23,12 @@ impl Round {
     }
 
     pub fn monkey_business(&self) -> u64 {
-        let mut monkey_inspection_count: Vec<_> = self.monkey_inspection_count.iter().collect();
+        let mut monkey_inspection_count: Vec<u64> =
+            self.monkey_inspection_count.values().copied().collect();
 
-        monkey_inspection_count.sort_by(|a, b| b.1.cmp(a.1));
+        monkey_inspection_count.sort_unstable();
 
-        monkey_inspection_count
-            .iter()
-            .take(2)
-            .map(|(_, value)| *value)
-            .product()
+        monkey_inspection_count.iter().rev().take(2).product()
     }
 }
 
@@ -46,16 +43,16 @@ impl Iterator for Round {
         for id in 0..self.monkey_by_id.len() {
             let monkey = self
                 .monkey_by_id
-                .get(&id)
+                .get_mut(&id)
                 .expect(" Monkey {monkey_id} not found");
 
             let throws_items = monkey
                 .items
-                .iter()
+                .drain(..)
                 .map(|item| {
-                    let item = monkey.inspect(*item);
+                    let item = Item(monkey.operation.calc(item.0));
                     let item = human_worry(item);
-                    let throw_to_monkey_id = monkey.gets_bored(item);
+                    let throw_to_monkey_id = monkey.test.throw_index(item.0);
                     (throw_to_monkey_id, item)
                 })
                 .collect::<Vec<_>>();
@@ -63,10 +60,6 @@ impl Iterator for Round {
             self.monkey_inspection_count
                 .entry(monkey.id)
                 .and_modify(|count| *count += throws_items.len() as u64);
-
-            self.monkey_by_id
-                .entry(monkey.id)
-                .and_modify(|monkey| monkey.items.clear());
 
             for (throw_index, item) in throws_items {
                 self.monkey_by_id

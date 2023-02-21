@@ -12,7 +12,7 @@ use crate::{input::Reader, round::Round};
 
 //
 
-pub fn part_one(input: &str) -> Option<u32> {
+pub fn part_one(input: &str) -> Option<u64> {
     let note: Reader = input.parse().expect("Note parsing error");
     let Reader(monkeys) = note;
 
@@ -26,10 +26,10 @@ pub fn part_one(input: &str) -> Option<u32> {
         round.next();
     }
 
-    Some(round.monkey_business() as u32)
+    Some(round.monkey_business())
 }
 
-pub fn part_two(input: &str) -> Option<u32> {
+pub fn part_two(input: &str) -> Option<u64> {
     let note: Reader = input.parse().expect("Note parsing error");
     let Reader(monkeys) = note;
 
@@ -48,5 +48,5 @@ pub fn part_two(input: &str) -> Option<u32> {
         round.next();
     }
 
-    Some(round.monkey_business() as u32)
+    Some(round.monkey_business())
 }

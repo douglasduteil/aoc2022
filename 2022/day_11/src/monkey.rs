@@ -8,16 +8,6 @@ pub struct Monkey {
     pub test: Test,
 }
 
-impl Monkey {
-    pub(crate) fn gets_bored(&self, Item(worry): Item) -> usize {
-        self.test.throw_index(worry)
-    }
-
-    pub(crate) fn inspect(&self, Item(worry): Item) -> Item {
-        Item(self.operation.calc(worry))
-    }
-}
-
 //
 
 type WorryType = u64;
