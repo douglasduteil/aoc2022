@@ -13,7 +13,7 @@ pub struct Round {
 //
 
 impl Round {
-    pub fn new(monkeys: &Vec<Monkey>, human_worry: impl Fn(Item) -> Item + 'static) -> Self {
+    pub fn new(monkeys: &[Monkey], human_worry: impl Fn(Item) -> Item + 'static) -> Self {
         let monkey_by_id = monkeys.iter().map(|m| (m.id, m.clone())).collect();
         Self {
             human_worry: Box::new(human_worry),

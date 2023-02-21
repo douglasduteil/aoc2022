@@ -94,7 +94,7 @@ impl Test {
     pub fn throw_index(&self, worry: u64) -> usize {
         match self {
             Test::DivisibleBy(divisor, (left, right)) => {
-                if worry % *divisor as u64 == 0 {
+                if worry % *divisor == 0 {
                     *left
                 } else {
                     *right
