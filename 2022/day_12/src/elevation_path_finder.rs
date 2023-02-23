@@ -17,7 +17,7 @@ impl ElevationPathFinder {
         }
     }
 
-    pub fn shortest(&self, start: Pos, end: Pos) -> Vec<Pos> {
+    pub fn shortest(&self, start: Pos, end: Pos) -> Option<Vec<Pos>> {
         let is_in_grid = |Pos(x, y): &&Pos| self.elevation_grid.get(*x, *y).is_some();
         let is_in_elevation_range = |current: Pos| {
             move |p: &&Pos| {
@@ -52,9 +52,9 @@ impl ElevationPathFinder {
         );
 
         if let Some((shortest_path, _)) = result {
-            return shortest_path;
+            return Some(shortest_path);
         } else {
-            unreachable!("No path found");
+            return None;
         }
     }
 }
@@ -69,7 +69,7 @@ mod test_shortest {
     fn test_shortest_same_start_end() {
         let grid = Grid::from_vec(vec!['a'; 9], 3);
         let pathfinder = ElevationPathFinder::new(grid);
-        let path = pathfinder.shortest(Pos(1, 1), Pos(1, 1));
+        let path = pathfinder.shortest(Pos(1, 1), Pos(1, 1)).unwrap();
         assert_eq!(path, vec![Pos(1, 1)]);
     }
 
@@ -77,7 +77,7 @@ mod test_shortest {
     fn test_shortest_zero_to_center() {
         let grid = Grid::from_vec(vec!['a'; 9], 3);
         let pathfinder = ElevationPathFinder::new(grid);
-        let path = pathfinder.shortest(Pos(0, 0), Pos(1, 1));
+        let path = pathfinder.shortest(Pos(0, 0), Pos(1, 1)).unwrap();
         assert_eq!(path, vec![Pos(0, 0), Pos(0, 1), Pos(1, 1)]);
     }
 
@@ -92,7 +92,7 @@ mod test_shortest {
         let grid = Grid::from_vec(range, 3);
 
         let pathfinder = ElevationPathFinder::new(grid);
-        let path = pathfinder.shortest(Pos(0, 0), Pos(2, 2));
+        let path = pathfinder.shortest(Pos(0, 0), Pos(2, 2)).unwrap();
         assert_eq!(
             path,
             vec![
