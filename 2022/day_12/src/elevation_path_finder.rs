@@ -21,9 +21,9 @@ impl ElevationPathFinder {
         let is_in_grid = |Pos(x, y): &&Pos| self.elevation_grid.get(*x, *y).is_some();
         let is_in_elevation_range = |current: Pos| {
             move |p: &&Pos| {
-                let e = current.elevation(&self.elevation_grid);
+                let e = current.elevation(&self.elevation_grid).unwrap_or_default();
                 let range = 0..=e + 1;
-                range.contains(&p.elevation(&self.elevation_grid))
+                range.contains(&p.elevation(&self.elevation_grid).unwrap_or_default())
             }
         };
 
@@ -51,11 +51,7 @@ impl ElevationPathFinder {
             |p| *p == end,
         );
 
-        if let Some((shortest_path, _)) = result {
-            return Some(shortest_path);
-        } else {
-            return None;
-        }
+        result.map(|(shortest_path, _)| shortest_path)
     }
 }
 

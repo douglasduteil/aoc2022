@@ -11,13 +11,9 @@ impl Pos {
         Pos(index / grid_cols, index % grid_cols)
     }
 
-    pub fn elevation(&self, grid: &Grid<char>) -> u8 {
+    pub fn elevation(&self, grid: &Grid<char>) -> Option<u8> {
         let Self(row, col) = *self;
-        let elevation_char = grid
-            .get(row, col)
-            .expect(format!("Can't get elevation of position : {row},{col}").as_str());
-
-        char_to_elevation(*elevation_char)
+        grid.get(row, col).map(|c| char_to_elevation(*c))
     }
 
     pub fn distance(&self, other: &Pos) -> u32 {
