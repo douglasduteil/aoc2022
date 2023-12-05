@@ -44,12 +44,7 @@ impl ElevationPathFinder {
                 .collect()
         };
 
-        let result = astar(
-            &start,
-            |p| successors(p),
-            |p| p.distance(&end),
-            |p| *p == end,
-        );
+        let result = astar(&start, successors, |p| p.distance(&end), |p| *p == end);
 
         result.map(|(shortest_path, _)| shortest_path)
     }
