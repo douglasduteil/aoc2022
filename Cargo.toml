@@ -1,2 +1,3 @@
 [workspace]
-members = ["advent_of_code", "2022/day_[0-9][0-9]"]
+members = ["advent_of_code", "202[0-9]/day_[0-9][0-9]"]
+resolver = "2"
