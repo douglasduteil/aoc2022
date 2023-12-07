@@ -42,8 +42,9 @@ impl FromStr for Motion {
     type Err = ParseIntError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let [direction, steps] = s.split(' ')
-            .collect::<Vec<&str>>()[..] else { unreachable!() };
+        let [direction, steps] = s.split(' ').collect::<Vec<&str>>()[..] else {
+            unreachable!()
+        };
         let steps: usize = steps.parse()?;
         let motion = match direction {
             "D" => Self::Down(1..=steps),
