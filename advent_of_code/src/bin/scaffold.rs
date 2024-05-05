@@ -27,7 +27,11 @@ fn parse_args() -> Result<Args, pico_args::Error> {
 }
 
 fn create_file(path: &str) -> Result<File, std::io::Error> {
-    OpenOptions::new().write(true).create(true).open(path)
+    OpenOptions::new()
+        .write(true)
+        .create(true)
+        .truncate(true)
+        .open(path)
 }
 
 fn replace_module_name(path: &str, name: &str) {
@@ -38,7 +42,7 @@ fn replace_module_name(path: &str, name: &str) {
         .unwrap()
         .write(contents.replace("%%NAME%%", name).as_bytes())
     {
-        Ok(_) => {
+        Ok(_bytes_written) => {
             println!("Edited {path}");
         }
         Err(_e) => {
